@@ -1,3 +1,5 @@
+import { getCountryData, getCountryCode, getCountryDataList } from "countries-list";
+
 export const NAV_ITEMS = [
     { href: '/', label: 'Dashboard' },
     { href: '/search', label: 'Search' },
@@ -35,6 +37,14 @@ export const CONDITION_OPTIONS = [
     { value: 'greater', label: 'Greater than (>)' },
     { value: 'less', label: 'Less than (<)' },
 ];
+
+// Country data options
+const countries_list = getCountryDataList();
+export const COUNTRY_LIST = countries_list.map((country)=>(
+    {
+        value:country.iso2, label:country.name
+    }
+))
 
 // TradingView Charts
 export const MARKET_OVERVIEW_WIDGET_CONFIG = {
