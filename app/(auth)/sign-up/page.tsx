@@ -4,10 +4,14 @@ import InputField from "@/components/forms/InputField";
 import SearchableListField from "@/components/forms/SearchableListField";
 import SelectField from "@/components/forms/SelectField";
 import { Button } from "@/components/ui/button";
+import { signUpEmail } from "@/lib/actions/auth.actions";
 import { INVESTMENT_GOALS, PREFERRED_INDUSTRIES, RISK_TOLERANCE_OPTIONS } from "@/lib/constants";
+import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form"
+import { toast } from "sonner";
 
 function SignUp() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -27,9 +31,13 @@ function SignUp() {
   })
   const onSubmit = async (data: SignUpFormData) => {
     try {
-      console.log(data);
+      const result = await signUpEmail(data);
+      if(result.success){
+        router.push("/");
+        toast.success("Welcome to Signalist")
+      }
     } catch (e) {
-      console.log(e);
+      toast.error("Sign up failed",{description:e instanceof Error ? e.message : "Failed to create an account"})
     }
   }
   return (
@@ -37,7 +45,7 @@ function SignUp() {
       <h1 className="form-title">Sign up & Personalise</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <InputField
-          name='fullname'
+          name='fullName'
           label="Full Name"
           placeholder="Sagnick Dey"
           register={register}

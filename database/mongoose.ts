@@ -17,9 +17,9 @@ if(!cached){
     cached = global.mongooseCache = {conn:null, promise:null};
 }
 
-export const connecDb = async ()=>{
+export const connectDb = async ()=>{
     if(!MONGO_URI) throw new Error("MONGO_URI must be set");
-    if(!cached.conn) return cached.conn;
+    if(cached.conn) return cached.conn;
     if(!cached.promise){
         cached.promise = mongoose.connect(MONGO_URI,{bufferCommands:false});
     }
