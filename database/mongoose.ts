@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { CacheHandler } from "next/dist/server/lib/incremental-cache";
 
 
 const MONGO_URI = process.env.MONGO_URI;
