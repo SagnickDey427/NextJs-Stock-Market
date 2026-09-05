@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, ArrowLeft, RefreshCcw } from 'lucide-react';
 
-export default function GlobalError({
+export default function RouteError({
   error,
   reset,
 }: {
