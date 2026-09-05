@@ -189,3 +189,41 @@ export const searchStocks = cache(async (query?: string): Promise<StockWithWatch
     return [];
   }
 });
+
+export const getStockDetails = cache(async (symbol: string) => {
+  try {
+    const token = process.env.FINNHUB_API_KEY ?? NEXT_PUBLIC_FINNHUB_API_KEY;
+    if (!token) throw new Error('FINNHUB API key is not configured');
+
+    const cleanSymbol = symbol.trim().toUpperCase();
+
+    // Fetch quote, profile, and metric in parallel
+    const [quote, profile, metric] = await Promise.all([
+      fetchJSON<any>(`${FINNHUB_BASE_URL}/quote?symbol=${cleanSymbol}&token=${token}`, 60),
+      fetchJSON<any>(`${FINNHUB_BASE_URL}/stock/profile2?symbol=${cleanSymbol}&token=${token}`, 3600),
+      fetchJSON<any>(`${FINNHUB_BASE_URL}/stock/metric?symbol=${cleanSymbol}&metric=all&token=${token}`, 3600)
+    ]);
+
+    return {
+      quote: {
+        c: quote?.c || 0, // Current price
+        d: quote?.d || 0, // Absolute change
+        dp: quote?.dp || 0, // Percent change
+      },
+      profile: {
+        name: profile?.name || cleanSymbol,
+        exchange: profile?.exchange || 'Unknown Exchange',
+        logo: profile?.logo || '',
+      },
+      metrics: {
+        eps: metric?.metric?.epsTTM || 'N/A',
+        marketCap: profile?.marketCapitalization ? (profile.marketCapitalization / 1000).toFixed(2) + 'B' : 'N/A', // Finnhub returns Market Cap in Millions
+        divYield: metric?.metric?.dividendYieldIndicatedAnnual || 'N/A',
+        pe: metric?.metric?.peTTM || 'N/A',
+      }
+    };
+  } catch (error) {
+    console.error('Error fetching stock details:', error);
+    return null;
+  }
+});
