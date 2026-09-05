@@ -11,6 +11,7 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { useDebounce } from '@/hooks/useDebounce';
+import { useRouter } from 'next/navigation';
 
 interface SearchInputProps {
   showSearch: boolean;
@@ -18,6 +19,7 @@ interface SearchInputProps {
 }
 
 export default function SearchInput({ showSearch, setShowSearch }: SearchInputProps) {
+  const router = useRouter();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -101,7 +103,11 @@ export default function SearchInput({ showSearch, setShowSearch }: SearchInputPr
                 <CommandItem 
                   key={uniqueIdentifier} 
                   value={uniqueIdentifier}
-                  className="p-4 flex items-center gap-3 rounded-lg hover:bg-[#1E293B]/50 data-[selected=true]:bg-[#1E293B]/50 text-[#FFFFFF]"
+                  onSelect={() => {
+                    setShowSearch(false);
+                    router.push(`/stocks/${item.symbol}?name=${encodeURIComponent(item.name)}&exchange=${encodeURIComponent(item.exchange)}`);
+                  }}
+                  className="p-4 flex items-center gap-3 rounded-lg hover:bg-[#1E293B]/50 data-[selected=true]:bg-[#1E293B]/50 text-[#FFFFFF] cursor-pointer"
                 >
                   <TrendingUp className="text-[#94A3B8] w-5 h-5 shrink-0" />
                   <div className="flex flex-col flex-1">
